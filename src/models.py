@@ -1,5 +1,5 @@
 import datetime
-from src.utils import hashing, get_text_from_boolean
+#from src.utils import hashing, get_text_from_boolean
 from bson.objectid import ObjectId
 
 class Contract():
