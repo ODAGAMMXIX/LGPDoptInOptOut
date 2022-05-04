@@ -9,4 +9,4 @@ def get_text_from_boolean(boolean):
     if boolean:
         return 'yes'
     else:
-        return 'no' 
+        return 'no'

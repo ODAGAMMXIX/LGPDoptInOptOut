@@ -6,7 +6,7 @@ from src import app, db
 @app.route('/contract', methods=['POST'])
 def create_contract():
     req = request.json # getting body from request
-    contract = Contract(req) # create object
+    contract = Contract(req) # create object (dealing with the Class)
     contract.save(db) # save on database
     # create json response
     response = jsonify({
@@ -16,7 +16,7 @@ def create_contract():
     return response
 @app.route('/contract/latest', methods=['GET'])
 def get_latest_contract():
-    contract = Contract.get_latest(db) # getting latest from db
+    contract = Contract.get_latest(db) # getting latest from db (dealing with the Class)
     # create json response
     response = jsonify({
         'contract': contract.asdict()
@@ -79,7 +79,7 @@ def update_user_notification(user_email):
     response = jsonify({
         'notification': user.notification,
         'receipt': user.create_setting_message(),
-        'key': notification.hashed_key
+        #'key': notification.hashed_key
     })
 
     return response
