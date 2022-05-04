@@ -71,11 +71,11 @@ def get_user_history_by_email(user_email):
 def update_user_notification(user_email):
     req = request.json
     notification = Notification(req)
-
+    
     User.update_notifications(user_email, db, notification)
-
+    
     user = User.find_by_email(db, user_email)
-
+    
     response = jsonify({
         'notification': user.notification,
         'receipt': user.create_setting_message(),
@@ -106,4 +106,4 @@ def get_user_contract(user_email):
         'contract': user.contract
     })
 
-    return response 
+    return response

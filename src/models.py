@@ -3,27 +3,27 @@ from src.utils import hashing, get_text_from_boolean
 from bson.objectid import ObjectId
 
 class Contract():
-    def __init__(self, data): #Constructor - Method
+    def __init__(self, data):
         self.created_date = data.get("created_date") if data.get("created_date") else datetime.datetime.now()
         self.content = data.get("content")
         self.version = data.get("version")
         self.hashed_key = data.get("hashed_key") if data.get("hashed_key") else hashing(self.content)
         self.id = data.get("_id") if data.get("_id") else None
 
-    def asdict(self): #json = dictionary mapping Python obj 2 json
+    def asdict(self):
         return {'id': str(self.id), 'created_date': self.created_date, 'content': self.content, 'version': self.version, 'hashed_key': self.hashed_key}
 
 
-    def save(self, application_db):#db connection; see connection.py
+    def save(self, application_db):
         application_collection = application_db["contract"]
         result = application_collection.insert_one(self.asdict())
         self.id = result.inserted_id
     
-    @staticmethod # alternative to reading all doc from collection #Class handles it all
+    @staticmethod
     def get_latest(application_db):
         application_collection = application_db["contract"]
         response = application_collection.find().sort("created_date", -1).limit(1)[0]
-        return Contract(response) #Class
+        return Contract(response)
 
 
 class User():
@@ -35,25 +35,26 @@ class User():
         self.email = data.get("email")
         self.phone = data.get("phone")
         self.document = data.get("document")
+        self.contract = data.get("contract")
         self.notification = data.get("notification") if data.get("notification") else notification.asdict()
         self.history = data.get("history") if data.get("history") else [notification.asdict()]
         self.id = data.get("_id") if data.get("_id") else None
 
-    def asdict(self):#json = dictionary mapping Python obj 2 json
-        return {'id':str(self.id), 'created_date':self.created_date,'change_date':self.change_date,'name':self.name,'email':self.email,'phone':self.phone,'document':self.document,'notification':self.notification,'history':self.history}
+    def asdict(self):
+        return {'id':str(self.id), 'created_date':self.created_date,'change_date':self.change_date,'name':self.name,'email':self.email,'phone':self.phone,'document':self.document, 'contract': self.contract,'notification':self.notification,'history':self.history}
     
     def save(self, application_db):
         application_collection = application_db["user"]
         result = application_collection.insert_one(self.asdict())
         self.id = result.inserted_id
     
-    @staticmethod# alternative to reading all doc from collection #Class handles it all
+    @staticmethod
     def find_by_email(application_db, email):
         application_collection = application_db["user"]
         result = application_collection.find_one({'email': email})
         return User(result)
     
-    @staticmethod# alternative to reading all doc from collection #Class handles it all
+    @staticmethod
     def update_notifications(email, application_db, notification):
         application_collection = application_db["user"]
         application_collection.update_one({"email": email}, 
@@ -61,11 +62,19 @@ class User():
                     "notification": notification.asdict()
                     },
                 "$push": {"history": notification.asdict()}})
+    @staticmethod
+    def update_contract(email, application_db, contract):
+        application_collection = application_db["user"]
+        application_collection.update_one({"email": email}, 
+                {"$set": {"contract": contract}})
     
-    def create_setting_message(self):# alternative to reading all doc from collection #Class handles it all
+    def create_setting_message(self):
         return f'Hello {self.name}, you changed your preferences to sms: {get_text_from_boolean(self.notification.get("receive_sms"))}, whatsapp: {get_text_from_boolean(self.notification.get("receive_whatsapp"))},  email: {get_text_from_boolean(self.notification.get("receive_email"))}, call: {get_text_from_boolean(self.notification.get("receive_call"))}'
 
-class Notification(): #PREFERENCES 0F NOTIFICATIONS
+    def create_contract_message(self):
+        return f'Hello {self.name}, you accept contract version {self.contract}'
+
+class Notification():
     def __init__(self, data):
         self.created_date = data.get("created_date") if data.get("created_date") else datetime.datetime.now()
         self.receive_sms = data.get("receive_sms") or False
