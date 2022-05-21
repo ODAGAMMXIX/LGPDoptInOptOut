@@ -69,10 +69,10 @@ class User():
                 {"$set": {"contract": contract}})
     #-----------------------------RECEIPT---------------------------------
     def create_setting_message(self): #RECEIPT 4 preferences of notification
-        return f'Hello {self.name}, you changed your preferences to sms: {get_text_from_boolean(self.notification.get("receive_sms"))}, whatsapp: {get_text_from_boolean(self.notification.get("receive_whatsapp"))},  email: {get_text_from_boolean(self.notification.get("receive_email"))}, call: {get_text_from_boolean(self.notification.get("receive_call"))}'
+        return f'Hello {self.name}, you have changed your preferences to sms: {get_text_from_boolean(self.notification.get("receive_sms"))}, whatsapp: {get_text_from_boolean(self.notification.get("receive_whatsapp"))},  email: {get_text_from_boolean(self.notification.get("receive_email"))}, call: {get_text_from_boolean(self.notification.get("receive_call"))}'
 
     def create_contract_message(self):  #RECEIPT contract version
-        return f'Hello {self.name}, you accept contract version {self.contract}'
+        return f'Hello {self.name}, you have accepted contract version {self.contract}'
 
 class Notification(): #PREFERENCES 0F NOTIFICATIONS
     def __init__(self, data):
