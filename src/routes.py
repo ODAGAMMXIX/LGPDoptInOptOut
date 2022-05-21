@@ -2,7 +2,7 @@ from flask import request, json, jsonify
 from src.models import Contract, User, Notification
 from src.utils import get_text_from_boolean
 from src import app, db
-
+#ABOUT CONTRACT
 @app.route('/contract', methods=['POST'])
 def create_contract():
     req = request.json # getting body from request
@@ -22,7 +22,7 @@ def get_latest_contract():
         'contract': contract.asdict()
     })
     return response
-
+#ABOUT USER
 @app.route("/user", methods=['POST'])
 def create_user():
     req = request.json # getting body from request
@@ -46,7 +46,7 @@ def get_user_by_email(user_email):
 
     return response
 
-
+#ABOUT NOTIFICATION
 @app.route("/user/notification/<string:user_email>", methods=['GET'])
 def get_user_notifications_by_email(user_email):
     user = User.find_by_email(db, user_email)
@@ -56,7 +56,7 @@ def get_user_notifications_by_email(user_email):
     })
 
     return response
-
+#ABOUT HISTORY
 @app.route("/user/history/<string:user_email>", methods=['GET'])
 def get_user_history_by_email(user_email):
     user = User.find_by_email(db, user_email)
@@ -66,8 +66,8 @@ def get_user_history_by_email(user_email):
     })
 
     return response
-
-@app.route("/user/notification/<string:user_email>", methods=['PUT'])
+#ABOUT NOTIFICATION
+@app.route("/user/notification/<string:user_email>", methods=['PUT']) #UPDATE
 def update_user_notification(user_email):
     req = request.json
     notification = Notification(req)
@@ -83,8 +83,8 @@ def update_user_notification(user_email):
     })
 
     return response
-
-@app.route("/user/contract/<string:user_email>", methods=['PUT'])
+#ABOUT CONTRACT
+@app.route("/user/contract/<string:user_email>", methods=['PUT']) #UPDATE
 def update_user_contract(user_email):
     req = request.json
     User.update_contract(user_email, db, req['contract'])

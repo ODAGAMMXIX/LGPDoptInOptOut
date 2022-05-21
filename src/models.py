@@ -26,8 +26,8 @@ class Contract():
         return Contract(response) #Class
 
 
-class User():
-    def __init__(self, data):
+class User(): 
+    def __init__(self, data):#Constructor - Method
         notification = Notification(data)
         self.created_date = data.get("created_date") or datetime.datetime.now()#priority from left 2 right
         self.change_date = data.get("change_date") or datetime.datetime.now()#priority from left 2 right
@@ -36,30 +36,30 @@ class User():
         self.phone = data.get("phone")
         self.document = data.get("document")
         self.contract = data.get("contract")
-        self.notification = data.get("notification") or notification.asdict()#priority from left 2 right
+        self.notification = data.get("notification") or notification.asdict()#priority from left 2 right #ASDICT FROM NOTIFICATION
         self.history = data.get("history") or [notification.asdict()]#priority from left 2 right
         self.id = data.get("_id") or None#priority from left 2 right
 
-    def asdict(self): #json = dictionary mapping Python obj 2 json
+    def asdict(self): #json = dictionary mapping Python obj (in memory) 2 json
         return {'id':str(self.id), 'created_date':self.created_date,'change_date':self.change_date,'name':self.name,'email':self.email,'phone':self.phone,'document':self.document, 'contract': self.contract,'notification':self.notification,'history':self.history}
     
     def save(self, application_db):
         application_collection = application_db["user"]
-        result = application_collection.insert_one(self.asdict())
+        result = application_collection.insert_one(self.asdict()) #From memory 2 json 2 BD
         self.id = result.inserted_id
     
-    @staticmethod # alternative to reading all doc from collection #Class handles it all
+    @staticmethod # alternative to reading all doc from collection; #Class handles it AND NEGOTIATE with MONGODB
     def find_by_email(application_db, email):
         application_collection = application_db["user"]
         result = application_collection.find_one({'email': email})
         return User(result)
     
-    @staticmethod # alternative to reading all doc from collection #Class handles it all
+    @staticmethod # alternative to reading all doc from collection #Class handles it AND NEGOTIATE with MONGODB
     def update_notifications(email, application_db, notification):
         application_collection = application_db["user"]
         application_collection.update_one({"email": email}, #find, set, push
                 {"$set": {
-                    "notification": notification.asdict() #write userś preferences 4 notification
+                    "notification": notification.asdict() #write user's preferences 4 notification
                     },
                 "$push": {"history": notification.asdict()}}) #stack
     @staticmethod # alternative to reading all doc from collection #Class handles it all
@@ -67,7 +67,7 @@ class User():
         application_collection = application_db["user"]
         application_collection.update_one({"email": email}, 
                 {"$set": {"contract": contract}})
-    
+    #-----------------------------RECEIPT---------------------------------
     def create_setting_message(self): #RECEIPT 4 preferences of notification
         return f'Hello {self.name}, you changed your preferences to sms: {get_text_from_boolean(self.notification.get("receive_sms"))}, whatsapp: {get_text_from_boolean(self.notification.get("receive_whatsapp"))},  email: {get_text_from_boolean(self.notification.get("receive_email"))}, call: {get_text_from_boolean(self.notification.get("receive_call"))}'
 

@@ -43,6 +43,6 @@ TEMAS-AVANCADOS
 
     export FLASK_ENV=development ; export FLASK_APP=index.py
 
-# Flask run
+# flask run
 
 * Running on http://127.0.0.1:5000/
